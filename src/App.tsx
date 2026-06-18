@@ -65,8 +65,42 @@ interface SolarLead {
 declare global {
   interface Window {
     firebase: any;
+    __fallback_storage?: Record<string, string>;
   }
 }
+
+// Safe storage wrapper to prevent crashes in sandboxed iframes where localStorage is blocked
+const safeStorage = {
+  getItem: (key: string): string | null => {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      console.warn("Storage access blocked, using in-memory backup:", e);
+      return window.__fallback_storage?.[key] || null;
+    }
+  },
+  setItem: (key: string, value: string): void => {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      console.warn("Storage write blocked, saving in-memory:", e);
+      if (!window.__fallback_storage) {
+        window.__fallback_storage = {};
+      }
+      window.__fallback_storage[key] = value;
+    }
+  },
+  removeItem: (key: string): void => {
+    try {
+      localStorage.removeItem(key);
+    } catch (e) {
+      console.warn("Storage removal blocked, removing in-memory:", e);
+      if (window.__fallback_storage) {
+        delete window.__fallback_storage[key];
+      }
+    }
+  }
+};
 
 export default function App() {
   // Navigation / View states
@@ -156,8 +190,8 @@ export default function App() {
 
     checkFirebaseAndInit();
 
-    // Load custom leads from localStorage if they exist
-    const savedLeads = localStorage.getItem('solar_wa_leads');
+    // Load custom leads from safeStorage if they exist
+    const savedLeads = safeStorage.getItem('solar_wa_leads');
     if (savedLeads) {
       try {
         setLeads(JSON.parse(savedLeads));
@@ -176,7 +210,7 @@ export default function App() {
   // Save Leads helper
   const saveLeadsToStorage = (updatedLeads: SolarLead[]) => {
     setLeads(updatedLeads);
-    localStorage.setItem('solar_wa_leads', JSON.stringify(updatedLeads));
+    safeStorage.setItem('solar_wa_leads', JSON.stringify(updatedLeads));
   };
 
   // Modern Toast alert trigger
@@ -270,7 +304,7 @@ export default function App() {
           });
           
           // Store solar company name locally or sync
-          localStorage.setItem(`user_company_${userCredential.user.uid}`, signupCompany);
+          safeStorage.setItem(`user_company_${userCredential.user.uid}`, signupCompany);
           showToast('success', 'Dashboard Account Provisioned!', `Welcome ${signupFullName} of ${signupCompany}! Enjoy Solar AI integrations.`);
         }
       } else {
@@ -316,7 +350,7 @@ export default function App() {
                 photoURL: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&fit=crop&q=80',
               };
               setUser(mockUser);
-              localStorage.setItem(`user_company_${mockUser.uid}`, signupCompany || "Solar Growth Co.");
+              safeStorage.setItem(`user_company_${mockUser.uid}`, signupCompany || "Solar Growth Co.");
               showToast('success', 'Sandbox Simulation Complete', 'Entering the high-converting Solar CRM and WhatsApp Playground.');
               setLoading(false);
             }, 1200);
@@ -415,7 +449,7 @@ export default function App() {
       const newLead: SolarLead = {
         id: `lead_${Date.now()}`,
         name: user?.displayName || "Simulated Visitor",
-        companyName: localStorage.getItem(`user_company_${user?.uid}`) || "Solar Venture Enterprise",
+        companyName: safeStorage.getItem(`user_company_${user?.uid}`) || "Solar Venture Enterprise",
         email: user?.email || "sandbox-tester@solar-saas.com",
         monthlyBill: targetBill,
         roofArea: roofAreaSqFt,
@@ -431,7 +465,7 @@ export default function App() {
 
   const getCompany = () => {
     if (!user) return "";
-    return localStorage.getItem(`user_company_${user.uid}`) || "Solar Global Network";
+    return safeStorage.getItem(`user_company_${user.uid}`) || "Solar Global Network";
   };
 
   return (
