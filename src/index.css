@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --color-solar: #FBBF24;
+  --color-solar-dark: #D97706;
+}
+
+/* Custom Animation & Extra Solar Glow FX */
+@keyframes solarPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.15;
+    filter: blur(100px);
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.3;
+    filter: blur(120px);
+  }
+}
+
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(40px) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.solar-glow-1 {
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.1) 0%, rgba(251, 191, 36, 0) 70%);
+  animation: solarPulse 12s infinite ease-in-out;
+}
+
+.solar-glow-2 {
+  background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0) 70%);
+  animation: solarPulse 18s infinite ease-in-out reverse;
+}
+
+/* Glassmorphism helpers for elements requiring maximum precision */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-panel-heavy {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.glass-input {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-input:focus {
+  border-color: #FBBF24;
+  background: rgba(15, 23, 42, 0.7);
+  box-shadow: 0 0 0 1px #FBBF24;
+  outline: none;
+}
+
+.floating-icon {
+  animation: float 6s infinite ease-in-out;
+}
+
+/* Beautiful dynamic notification styles */
+.toast-success {
+  border-left: 4px solid #10B981;
+  background: rgba(16, 185, 129, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.toast-error {
+  border-left: 4px solid #EF4444;
+  background: rgba(239, 68, 68, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+/* Custom dark scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(251, 191, 36, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(251, 191, 36, 0.6);
+}

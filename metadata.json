@@ -1,0 +1,6 @@
+{
+  "name": "Solar SaaS Portal",
+  "description": "A premium, high-converting login and signup portal for the Solar WhatsApp AI SaaS platform, featuring solar-themed design and Firebase Authentication.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
