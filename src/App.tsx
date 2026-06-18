@@ -138,12 +138,6 @@ export default function App() {
           authSubscription = auth.onAuthStateChanged((firebaseUser: any) => {
             if (firebaseUser) {
               setUser(firebaseUser);
-              // Set persistent user details if there's any meta-data
-              if (!firebaseUser.displayName && signupFullName) {
-                firebaseUser.updateProfile({
-                  displayName: signupFullName
-                });
-              }
             } else {
               setUser(null);
             }
@@ -177,7 +171,7 @@ export default function App() {
         authSubscription();
       }
     };
-  }, [signupFullName]);
+  }, []);
 
   // Save Leads helper
   const saveLeadsToStorage = (updatedLeads: SolarLead[]) => {
