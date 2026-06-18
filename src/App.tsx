@@ -310,8 +310,8 @@ export default function App() {
         } catch (popupError: any) {
           console.warn("Popup blocked/failed, attempting redirect flow instead", popupError);
           // Standard backup login simulation if browser blocklists popups inside standard workspace sandbox
-          if (popupError.code === 'auth/popup-blocked' || popupError.code === 'auth/cancelled-popup-request' || popupError.message.includes('permission_denied')) {
-            showToast('info', 'Secure Iframe Tunnel active', 'Popup authentication was blocked by browser sandbox. Simulating secure dev login credentials...');
+          if (popupError.code === 'auth/popup-blocked' || popupError.code === 'auth/cancelled-popup-request' || popupError.code === 'auth/popup-closed-by-user' || popupError.message.includes('permission_denied')) {
+            showToast('info', 'Secure Iframe Tunnel or Simulation active', 'Direct callback minimized or dismissed. Simulating secure sandbox developer login credentials...');
             
             // Generate a premium simulated account for fluid demonstration
             setTimeout(() => {
